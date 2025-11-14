@@ -393,6 +393,7 @@
     // NOTE: This password is hashed for basic protection
     // For production, you'd want server-side authentication
     const PASSWORD_HASH = '4f3bedac8096ef06a4902c84cfd4a08ec1f1f88049637a04e56bd1384dbfff6a'; // 'fartosmarto'
+    const altpass = '08a841e996781e9e77d30a4e4420a8f501a280b00624e6d1224bf54aaff73eba' //curse word
 
     async function hashPassword(password) {
         const encoder = new TextEncoder();
@@ -407,7 +408,7 @@
         const input = document.getElementById('passwordInput').value;
         const hashed = await hashPassword(input);
 
-        if (hashed === PASSWORD_HASH) {
+        if (hashed === PASSWORD_HASH || hashed === altpass) {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('errorMessage').style.display = 'none';
