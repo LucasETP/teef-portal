@@ -20,11 +20,10 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Login Page Styles */
         .login-page {
             display: flex;
             flex-direction: column;
@@ -63,18 +62,23 @@
             50% { transform: scale(1.1); }
         }
 
-        input[type="password"] {
+        input[type="password"], input[type="text"], textarea {
             width: 100%;
             padding: 15px;
             font-family: 'Courier New', monospace;
             font-size: 1.1em;
             border: 3px solid #ff69b4;
             background: #fff;
-            margin: 20px 0;
+            margin: 10px 0;
             outline: none;
         }
 
-        input[type="password"]:focus {
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input[type="password"]:focus, input[type="text"]:focus, textarea:focus {
             border-color: #ff1493;
             box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
         }
@@ -110,7 +114,6 @@
             display: none;
         }
 
-        /* Dashboard Styles */
         .dashboard {
             display: none;
         }
@@ -139,6 +142,14 @@
             font-size: 0.9em;
         }
 
+        .section-title {
+            color: #ff1493;
+            font-size: 1.8em;
+            margin: 30px 0 15px 0;
+            text-align: center;
+            text-shadow: 2px 2px 0 #ffc0cb;
+        }
+
         .widgets-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -161,7 +172,6 @@
             padding-bottom: 10px;
         }
 
-        /* Wordle Widget */
         .wordle-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -220,7 +230,6 @@
             grid-column: span 2;
         }
 
-        /* Photo Widget */
         .photo-upload {
             text-align: center;
         }
@@ -228,6 +237,7 @@
         .photo-preview {
             margin: 15px 0;
             max-width: 100%;
+            max-height: 300px;
             border: 3px solid #b19cd9;
             display: none;
         }
@@ -242,9 +252,20 @@
             padding: 12px 24px;
             cursor: pointer;
             margin: 10px 0;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.1s;
         }
 
-        /* Chinese Word Widget */
+        .upload-btn:hover {
+            background: #9370db;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
         .word-display {
             background: #fff0f5;
             border: 3px solid #ff69b4;
@@ -253,10 +274,11 @@
             text-align: center;
         }
 
-        .chinese-char {
+        .word-char {
             font-size: 3em;
             color: #ff1493;
             margin: 10px 0;
+            font-weight: bold;
         }
 
         .word-info {
@@ -264,17 +286,26 @@
             margin: 5px 0;
         }
 
-        select {
-            width: 100%;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 1em;
-            border: 3px solid #b19cd9;
-            background: white;
+        .word-form {
+            background: #f0f8ff;
+            border: 3px dashed #b19cd9;
+            padding: 15px;
             margin: 10px 0;
         }
 
-        /* Message Widget */
+        .word-form label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #9370db;
+        }
+
+        .submit-word-btn {
+            background: #9370db;
+            width: 100%;
+            margin-top: 15px;
+        }
+
         .message-box {
             background: #ffe4e1;
             border: 3px dashed #ff69b4;
@@ -285,7 +316,20 @@
             color: #ff1493;
         }
 
-        /* Responsive */
+        .loading {
+            text-align: center;
+            color: #9370db;
+            padding: 10px;
+            font-style: italic;
+        }
+
+        .info-text {
+            font-size: 0.9em;
+            color: #666;
+            margin: 10px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8em;
@@ -304,14 +348,9 @@
                 padding: 8px 2px;
             }
         }
-
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-<!-- Login Page -->
 <div class="login-page" id="loginPage">
     <div class="login-box">
         <h1>✨ TEEF PORTAL ✨</h1>
@@ -327,7 +366,6 @@
     </div>
 </div>
 
-<!-- Dashboard -->
 <div class="dashboard" id="dashboard">
     <div class="container">
         <div class="dashboard-header">
@@ -335,64 +373,128 @@
             <button class="logout-btn" onclick="logout()">LOGOUT</button>
         </div>
 
+        <!-- WORDLE SECTION -->
+        <div class="widget" style="margin-bottom: 30px;">
+            <h2>🎮 Daily Wordle</h2>
+            <div class="info-text">New word every day! (Weekly rotation)</div>
+            <div id="wordleGame">
+                <div class="wordle-grid" id="wordleGrid"></div>
+                <div class="wordle-keyboard" id="keyboard"></div>
+                <div id="wordleMessage" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <!-- PHOTOS SECTION -->
+        <div class="section-title">📸 Photo Gallery</div>
         <div class="widgets-grid">
-            <!-- Wordle Widget -->
             <div class="widget">
-                <h2>🎮 Daily Wordle</h2>
-                <div id="wordleGame">
-                    <div class="wordle-grid" id="wordleGrid"></div>
-                    <div class="wordle-keyboard" id="keyboard"></div>
-                    <div id="wordleMessage" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>
-                </div>
-            </div>
-
-            <!-- Bunny Photo Widget -->
-            <div class="widget">
-                <h2>🐰 Stubert Picture of the Day</h2>
+                <h2>🐰 Stubert Picture</h2>
                 <div class="photo-upload">
-                    <img id="photoPreview" class="photo-preview" alt="Bunny photo">
+                    <img id="stubertPreview" class="photo-preview" alt="Stubert photo">
                     <div>
-                        <label for="photoInput" class="upload-btn">
-                            📸 UPLOAD PHOTO
-                        </label>
-                        <input type="file" id="photoInput" accept="image/*">
+                        <label for="stubertInput" class="upload-btn">📸 UPLOAD STUBERT</label>
+                        <input type="file" id="stubertInput" accept="image/*">
                     </div>
-                    <div id="photoDate" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+                    <div id="stubertDate" class="info-text"></div>
+                    <div id="stubertLoading" class="loading" style="display: none;">Uploading... 🐰</div>
                 </div>
             </div>
 
-            <!-- Chinese Word Widget -->
             <div class="widget">
-                <h2>🇨🇳 Chinese Word</h2>
-                <select id="wordSelect" onchange="updateChineseWord()">
-                    <option value="">-- Select a word --</option>
-                    <option value="你好|nǐ hǎo|hello">你好 - Hello</option>
-                    <option value="谢谢|xiè xie|thank you">谢谢 - Thank you</option>
-                    <option value="爱|ài|love">爱 - Love</option>
-                    <option value="朋友|péng you|friend">朋友 - Friend</option>
-                    <option value="家|jiā|home/family">家 - Home/Family</option>
-                </select>
-                <div class="word-display" id="wordDisplay">
-                    <div class="chinese-char">🎎</div>
-                    <div class="word-info">Select a word above!</div>
+                <h2>🐕 Shiba Picture</h2>
+                <div class="photo-upload">
+                    <img id="shibaPreview" class="photo-preview" alt="Shiba photo">
+                    <div>
+                        <label for="shibaInput" class="upload-btn">📸 UPLOAD SHIBA</label>
+                        <input type="file" id="shibaInput" accept="image/*">
+                    </div>
+                    <div id="shibaDate" class="info-text"></div>
+                    <div id="shibaLoading" class="loading" style="display: none;">Uploading... 🐕</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LANGUAGE LEARNING SECTION -->
+        <div class="section-title">🌍 Language Learning</div>
+        <div class="widgets-grid">
+            <!-- Chinese Word - She uploads for you -->
+            <div class="widget">
+                <h2>🇨🇳 Chinese Word for Lulu</h2>
+                <div class="word-display" id="chineseDisplay">
+                    <div class="word-char">🎎</div>
+                    <div class="word-info">No word yet!</div>
+                </div>
+                <div class="word-form">
+                    <label>Chinese Characters:</label>
+                    <input type="text" id="chineseChar" placeholder="e.g., 你好">
+                    <label>Pinyin:</label>
+                    <input type="text" id="chinesePinyin" placeholder="e.g., nǐ hǎo">
+                    <label>English:</label>
+                    <input type="text" id="chineseEnglish" placeholder="e.g., hello">
+                    <button class="submit-word-btn" onclick="submitChineseWord()">UPLOAD WORD</button>
                 </div>
             </div>
 
-            <!-- Love Message Widget -->
+            <!-- Spanish Word - You upload for her -->
             <div class="widget">
-                <h2>💌 Daily Message</h2>
-                <div class="message-box">
-                    I told you id change the message silly! 😽
+                <h2>🇪🇸 Spanish Word for Teef</h2>
+                <div class="word-display" id="spanishDisplay">
+                    <div class="word-char">💃</div>
+                    <div class="word-info">No word yet!</div>
                 </div>
+                <div class="word-form">
+                    <label>Spanish Word:</label>
+                    <input type="text" id="spanishWord" placeholder="e.g., Hola">
+                    <label>Pronunciation:</label>
+                    <input type="text" id="spanishPronunciation" placeholder="e.g., OH-lah">
+                    <label>English:</label>
+                    <input type="text" id="spanishEnglish" placeholder="e.g., hello">
+                    <button class="submit-word-btn" onclick="submitSpanishWord()">UPLOAD WORD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGE SECTION -->
+        <div class="widget" style="margin-top: 30px;">
+            <h2>💌 Daily Message</h2>
+            <div class="message-box">
+                I told you id change the message silly! 😽
             </div>
         </div>
     </div>
 </div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script>
-    // NOTE: This password is hashed for basic protection
-    // For production, you'd want server-side authentication
-    const PASSWORD_HASH = '4f3bedac8096ef06a4902c84cfd4a08ec1f1f88049637a04e56bd1384dbfff6a'; // 'fartosmarto'
+    // ============================================
+    // FIREBASE CONFIGURATION
+    // ============================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAkRX4SYQAKbd1hz9DhzWLjpH8B6KqL-R8",
+        authDomain: "teef-portal.firebaseapp.com",
+        projectId: "teef-portal",
+        storageBucket: "teef-portal.firebasestorage.app",
+        messagingSenderId: "430563187500",
+        appId: "1:430563187500:web:143bf1cf2246857c342a89"
+    };
+
+    let db;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log('✅ Firebase initialized');
+    } catch (error) {
+        console.error('❌ Firebase initialization error:', error);
+        alert('Firebase not configured! See console for details.');
+    }
+
+    // ============================================
+    // PASSWORD & AUTH
+    // ============================================
+    const PASSWORD_HASH = '4f3bedac8096ef06a4902c84cfd4a08ec1f1f88049637a04e56bd1384dbfff6a';
 
     async function hashPassword(password) {
         const encoder = new TextEncoder();
@@ -424,46 +526,70 @@
         document.getElementById('passwordInput').value = '';
     }
 
-    // Allow Enter key to submit
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') checkPassword();
         });
     });
 
-    // Initialize all widgets
+    // ============================================
+    // INITIALIZE WIDGETS
+    // ============================================
     function initWidgets() {
         initWordle();
-        initPhotoUpload();
-        loadChineseWord();
+        initPhotoUpload('stubert', 'stubertInput', 'stubertPreview', 'stubertDate', 'stubertLoading');
+        initPhotoUpload('shiba', 'shibaInput', 'shibaPreview', 'shibaDate', 'shibaLoading');
+        loadLanguageWord('chinese');
+        loadLanguageWord('spanish');
     }
 
-    // ===== WORDLE WIDGET =====
+    // ============================================
+    // WORDLE WIDGET (WITH WEEKLY ROTATION)
+    // ============================================
+    // EDIT THIS ARRAY TO CHANGE WEEKLY WORDS (Sunday = 0, Saturday = 6)
+    const WEEKLY_WORDS = [
+        'BUNNY',  // Sunday
+        'MURAT',  // Monday
+        'SHIBA',  // Tuesday
+        'TEEFS',  // Wednesday
+        'LOVED',  // Thursday
+        'HAPPY',  // Friday
+        'COZY'    // Saturday
+    ];
+
     let wordleState = {
-        word: 'MURAT',
+        word: '',
         guesses: [],
         currentGuess: '',
         gameOver: false,
         maxGuesses: 6
     };
 
-    function initWordle() {
-        // Check if already completed today
-        const saved = localStorage.getItem('wordleState');
-        const today = new Date().toDateString();
+    function getTodaysWord() {
+        const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+        return WEEKLY_WORDS[dayOfWeek];
+    }
 
-        if (saved) {
-            const data = JSON.parse(saved);
-            if (data.date === today && data.gameOver) {
-                wordleState = data;
-                renderWordle();
-                return;
+    async function initWordle() {
+        const today = new Date().toDateString();
+        const todaysWord = getTodaysWord();
+
+        try {
+            const doc = await db.collection('wordle').doc('current').get();
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.date === today) {
+                    wordleState = data;
+                    renderWordle();
+                    return;
+                }
             }
+        } catch (error) {
+            console.error('Error loading Wordle:', error);
         }
 
-        // Reset for new day
         wordleState = {
-            word: 'MURAT',
+            word: todaysWord,
             guesses: [],
             currentGuess: '',
             gameOver: false,
@@ -473,21 +599,26 @@
         renderWordle();
     }
 
+    async function saveWordleState() {
+        try {
+            await db.collection('wordle').doc('current').set(wordleState);
+        } catch (error) {
+            console.error('Error saving Wordle:', error);
+        }
+    }
+
     function renderWordle() {
         const grid = document.getElementById('wordleGrid');
         grid.innerHTML = '';
 
-        // Render previous guesses
         wordleState.guesses.forEach(guess => {
             renderGuess(guess, true);
         });
 
-        // Render current guess
         if (!wordleState.gameOver && wordleState.guesses.length < wordleState.maxGuesses) {
             renderGuess(wordleState.currentGuess, false);
         }
 
-        // Render empty rows
         const remaining = wordleState.maxGuesses - wordleState.guesses.length - (wordleState.gameOver ? 0 : 1);
         for (let i = 0; i < remaining; i++) {
             renderGuess('', false);
@@ -575,74 +706,165 @@
 
         if (wordleState.currentGuess === wordleState.word || wordleState.guesses.length >= wordleState.maxGuesses) {
             wordleState.gameOver = true;
-            localStorage.setItem('wordleState', JSON.stringify(wordleState));
         }
 
         wordleState.currentGuess = '';
+        saveWordleState();
         renderWordle();
     }
 
-    // ===== PHOTO WIDGET =====
-    function initPhotoUpload() {
-        const input = document.getElementById('photoInput');
-        const preview = document.getElementById('photoPreview');
-        const dateDisplay = document.getElementById('photoDate');
+    // ============================================
+    // PHOTO WIDGETS (GENERIC)
+    // ============================================
+    function initPhotoUpload(petName, inputId, previewId, dateId, loadingId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        const dateDisplay = document.getElementById(dateId);
+        const loading = document.getElementById(loadingId);
 
-        // Load saved photo
-        const saved = localStorage.getItem('bunnyPhoto');
-        if (saved) {
-            const data = JSON.parse(saved);
-            preview.src = data.photo;
-            preview.style.display = 'block';
-            dateDisplay.textContent = `Uploaded: ${data.date}`;
-        }
+        // Load current photo
+        db.collection('photos').doc(petName).get().then(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                preview.src = data.photoData;
+                preview.style.display = 'block';
+                dateDisplay.textContent = `Uploaded: ${data.date}`;
+            }
+        }).catch(error => console.error('Error loading photo:', error));
 
-        input.addEventListener('change', (e) => {
+        // Real-time updates
+        db.collection('photos').doc(petName).onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                preview.src = data.photoData;
+                preview.style.display = 'block';
+                dateDisplay.textContent = `Uploaded: ${data.date}`;
+                loading.style.display = 'none';
+            }
+        });
+
+        input.addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const photoData = {
-                        photo: event.target.result,
-                        date: new Date().toLocaleDateString()
-                    };
-                    localStorage.setItem('bunnyPhoto', JSON.stringify(photoData));
-                    preview.src = photoData.photo;
-                    preview.style.display = 'block';
-                    dateDisplay.textContent = `Uploaded: ${photoData.date}`;
-                };
-                reader.readAsDataURL(file);
+            if (!file) return;
+
+            if (file.size > 1024 * 1024) {
+                alert('Photo too large! Please choose an image under 1MB.');
+                return;
+            }
+
+            loading.style.display = 'block';
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    await db.collection('photos').doc(petName).set({
+                        photoData: event.target.result,
+                        date: new Date().toLocaleDateString(),
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                    alert('Upload failed!');
+                    loading.style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ============================================
+    // LANGUAGE WORD WIDGETS
+    // ============================================
+    function loadLanguageWord(language) {
+        // Load initial word
+        db.collection('words').doc(language).get().then(doc => {
+            if (doc.exists) {
+                updateLanguageDisplay(language, doc.data());
+            }
+        }).catch(error => console.error(`Error loading ${language} word:`, error));
+
+        // Real-time updates
+        db.collection('words').doc(language).onSnapshot((doc) => {
+            if (doc.exists) {
+                updateLanguageDisplay(language, doc.data());
             }
         });
     }
 
-    // ===== CHINESE WORD WIDGET =====
-    function loadChineseWord() {
-        const saved = localStorage.getItem('chineseWord');
-        if (saved) {
-            document.getElementById('wordSelect').value = saved;
-            updateChineseWord();
+    function updateLanguageDisplay(language, data) {
+        const display = document.getElementById(language + 'Display');
+
+        if (language === 'chinese') {
+            display.innerHTML = `
+                <div class="word-char">${data.character}</div>
+                <div class="word-info">${data.pinyin}</div>
+                <div class="word-info">"${data.english}"</div>
+            `;
+        } else if (language === 'spanish') {
+            display.innerHTML = `
+                <div class="word-char">${data.word}</div>
+                <div class="word-info">${data.pronunciation}</div>
+                <div class="word-info">"${data.english}"</div>
+            `;
         }
     }
 
-    function updateChineseWord() {
-        const select = document.getElementById('wordSelect');
-        const display = document.getElementById('wordDisplay');
-        const value = select.value;
+    async function submitChineseWord() {
+        const character = document.getElementById('chineseChar').value.trim();
+        const pinyin = document.getElementById('chinesePinyin').value.trim();
+        const english = document.getElementById('chineseEnglish').value.trim();
 
-        if (!value) {
-            display.innerHTML = '<div class="chinese-char">🎎</div><div class="word-info">Select a word above!</div>';
+        if (!character || !pinyin || !english) {
+            alert('Please fill in all fields!');
             return;
         }
 
-        localStorage.setItem('chineseWord', value);
+        try {
+            await db.collection('words').doc('chinese').set({
+                character,
+                pinyin,
+                english,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        const [chinese, pinyin, english] = value.split('|');
-        display.innerHTML = `
-                <div class="chinese-char">${chinese}</div>
-                <div class="word-info">${pinyin}</div>
-                <div class="word-info">"${english}"</div>
-            `;
+            document.getElementById('chineseChar').value = '';
+            document.getElementById('chinesePinyin').value = '';
+            document.getElementById('chineseEnglish').value = '';
+
+            alert('Word uploaded! ✨');
+        } catch (error) {
+            console.error('Error uploading Chinese word:', error);
+            alert('Upload failed!');
+        }
+    }
+
+    async function submitSpanishWord() {
+        const word = document.getElementById('spanishWord').value.trim();
+        const pronunciation = document.getElementById('spanishPronunciation').value.trim();
+        const english = document.getElementById('spanishEnglish').value.trim();
+
+        if (!word || !pronunciation || !english) {
+            alert('Please fill in all fields!');
+            return;
+        }
+
+        try {
+            await db.collection('words').doc('spanish').set({
+                word,
+                pronunciation,
+                english,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('spanishWord').value = '';
+            document.getElementById('spanishPronunciation').value = '';
+            document.getElementById('spanishEnglish').value = '';
+
+            alert('Word uploaded! ✨');
+        } catch (error) {
+            console.error('Error uploading Spanish word:', error);
+            alert('Upload failed!');
+        }
     }
 </script>
 </body>
