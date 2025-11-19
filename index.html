@@ -330,6 +330,76 @@
             text-align: center;
         }
 
+        .word-history {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #b19cd9;
+        }
+
+        .word-history-title {
+            font-size: 1em;
+            color: #9370db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .word-history-title:hover {
+            color: #7b5fb8;
+        }
+
+        .word-history-list {
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .word-history-list.show {
+            display: block;
+        }
+
+        .word-history-item {
+            background: #f0f8ff;
+            border: 2px solid #b19cd9;
+            padding: 10px;
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .word-history-item .word-char {
+            font-size: 1.5em;
+            margin: 5px 0;
+        }
+
+        .word-history-item .word-info {
+            font-size: 0.9em;
+            margin: 3px 0;
+        }
+
+        .message-edit-btn {
+            background: #b19cd9;
+            padding: 8px 16px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .message-edit-form {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .message-edit-form.show {
+            display: block;
+        }
+
+        .message-edit-form textarea {
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8em;
@@ -376,7 +446,7 @@
         <!-- WORDLE SECTION -->
         <div class="widget" style="margin-bottom: 30px;">
             <h2>🎮 Daily Wordle</h2>
-            <div class="info-text">New word every day! (Weekly rotation)</div>
+            <div class="info-text">New word every day!</div>
             <div id="wordleGame">
                 <div class="wordle-grid" id="wordleGrid"></div>
                 <div class="wordle-keyboard" id="keyboard"></div>
@@ -433,6 +503,14 @@
                     <input type="text" id="chineseEnglish" placeholder="e.g., hello">
                     <button class="submit-word-btn" onclick="submitChineseWord()">UPLOAD WORD</button>
                 </div>
+                <div class="word-history" id="chineseHistory">
+                    <div class="word-history-title" onclick="toggleHistory('chinese')">
+                        <span>📚</span>
+                        <span>Study Past Words</span>
+                        <span id="chineseHistoryToggle">▼</span>
+                    </div>
+                    <div class="word-history-list" id="chineseHistoryList"></div>
+                </div>
             </div>
 
             <!-- Spanish Word - You upload for her -->
@@ -451,14 +529,23 @@
                     <input type="text" id="spanishEnglish" placeholder="e.g., hello">
                     <button class="submit-word-btn" onclick="submitSpanishWord()">UPLOAD WORD</button>
                 </div>
+                <div class="word-history" id="spanishHistory">
+                    <div class="word-history-title" onclick="toggleHistory('spanish')">
+                        <span>📚</span>
+                        <span>Study Past Words</span>
+                        <span id="spanishHistoryToggle">▼</span>
+                    </div>
+                    <div class="word-history-list" id="spanishHistoryList"></div>
+                </div>
             </div>
         </div>
 
         <!-- MESSAGE SECTION -->
         <div class="widget" style="margin-top: 30px;">
             <h2>💌 Daily Message</h2>
-            <div class="message-box">
-                I told you id change the message silly! 😽
+            <div class="info-text">New message every day!</div>
+            <div class="message-box" id="messageBox">
+                Loading message...
             </div>
         </div>
     </div>
@@ -541,6 +628,7 @@
         initPhotoUpload('shiba', 'shibaInput', 'shibaPreview', 'shibaDate', 'shibaLoading');
         loadLanguageWord('chinese');
         loadLanguageWord('spanish');
+        initMessages();
     }
 
     // ============================================
@@ -549,12 +637,12 @@
     // EDIT THIS ARRAY TO CHANGE WEEKLY WORDS (Sunday = 0, Saturday = 6)
     const WEEKLY_WORDS = [
         'BUNNY',  // Sunday
-        'MURAT',  // Monday
-        'SHIBA',  // Tuesday
-        'TEEFS',  // Wednesday
-        'LOVED',  // Thursday
-        'HAPPY',  // Friday
-        'COZY'    // Saturday
+        'PASTA',  // Monday
+        'FARTO',  // Tuesday
+        'SCUBA',  // Wednesday
+        'CHINA',  // Thursday
+        'SPAIN',  // Friday
+        'SLEEP'    // Saturday
     ];
 
     let wordleState = {
@@ -779,16 +867,68 @@
         // Load initial word
         db.collection('words').doc(language).get().then(doc => {
             if (doc.exists) {
-                updateLanguageDisplay(language, doc.data());
+                const data = doc.data();
+                updateLanguageDisplay(language, data);
+                if (data.history && data.history.length > 0) {
+                    renderWordHistory(language, data.history);
+                }
             }
         }).catch(error => console.error(`Error loading ${language} word:`, error));
 
         // Real-time updates
         db.collection('words').doc(language).onSnapshot((doc) => {
             if (doc.exists) {
-                updateLanguageDisplay(language, doc.data());
+                const data = doc.data();
+                updateLanguageDisplay(language, data);
+                if (data.history && data.history.length > 0) {
+                    renderWordHistory(language, data.history);
+                }
             }
         });
+    }
+
+    function renderWordHistory(language, history) {
+        const historyList = document.getElementById(language + 'HistoryList');
+        if (!historyList) return;
+
+        historyList.innerHTML = '';
+        
+        // Reverse to show newest first
+        const reversedHistory = [...history].reverse();
+        
+        reversedHistory.forEach((word, index) => {
+            const item = document.createElement('div');
+            item.className = 'word-history-item';
+            
+            if (language === 'chinese') {
+                item.innerHTML = `
+                    <div class="word-char">${word.character}</div>
+                    <div class="word-info">${word.pinyin}</div>
+                    <div class="word-info">"${word.english}"</div>
+                `;
+            } else if (language === 'spanish') {
+                item.innerHTML = `
+                    <div class="word-char">${word.word}</div>
+                    <div class="word-info">${word.pronunciation}</div>
+                    <div class="word-info">"${word.english}"</div>
+                `;
+            }
+            
+            historyList.appendChild(item);
+        });
+    }
+
+    function toggleHistory(language) {
+        const historyList = document.getElementById(language + 'HistoryList');
+        const toggle = document.getElementById(language + 'HistoryToggle');
+        
+        if (historyList.classList.contains('show')) {
+            historyList.classList.remove('show');
+            toggle.textContent = '▼';
+        } else {
+            historyList.classList.add('show');
+            toggle.textContent = '▲';
+        }
     }
 
     function updateLanguageDisplay(language, data) {
@@ -820,10 +960,29 @@
         }
 
         try {
+            // Get current word to add to history
+            const currentDoc = await db.collection('words').doc('chinese').get();
+            let history = [];
+            
+            if (currentDoc.exists) {
+                const currentData = currentDoc.data();
+                // Only add to history if there's a current word (not empty/placeholder)
+                if (currentData.character && currentData.character !== '🎎') {
+                    history = currentData.history || [];
+                    history.push({
+                        character: currentData.character,
+                        pinyin: currentData.pinyin,
+                        english: currentData.english,
+                        timestamp: currentData.timestamp || firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            }
+
             await db.collection('words').doc('chinese').set({
                 character,
                 pinyin,
                 english,
+                history: history,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
@@ -849,10 +1008,29 @@
         }
 
         try {
+            // Get current word to add to history
+            const currentDoc = await db.collection('words').doc('spanish').get();
+            let history = [];
+            
+            if (currentDoc.exists) {
+                const currentData = currentDoc.data();
+                // Only add to history if there's a current word (not empty/placeholder)
+                if (currentData.word && currentData.word !== '💃') {
+                    history = currentData.history || [];
+                    history.push({
+                        word: currentData.word,
+                        pronunciation: currentData.pronunciation,
+                        english: currentData.english,
+                        timestamp: currentData.timestamp || firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            }
+
             await db.collection('words').doc('spanish').set({
                 word,
                 pronunciation,
                 english,
+                history: history,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
@@ -865,6 +1043,63 @@
             console.error('Error uploading Spanish word:', error);
             alert('Upload failed!');
         }
+    }
+
+    // ============================================
+    // DAILY MESSAGES (WITH WEEKLY ROTATION)
+    // ============================================
+    // EDIT THIS ARRAY TO CHANGE WEEKLY MESSAGES (Sunday = 0, Saturday = 6)
+    const WEEKLY_MESSAGES = [
+        'You are the best thing that\'s ever happened to me!',  // Sunday
+        'Monday\'s suck. But you suck better ;)',                  // Monday
+        'You are my favorite tattoo artist',                          // Tuesday
+        'Can\'t wait to go to boston with you...',                   // Wednesday
+        'You are smart like gmail and cute like pibble',                          // Thursday
+        'Your farts smell like roses to me',                             // Friday
+        '*Boops you on the nose* Derp xD'                        // Saturday
+    ];
+
+    function getTodaysMessage() {
+        const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+        return WEEKLY_MESSAGES[dayOfWeek];
+    }
+
+    async function initMessages() {
+        try {
+            const doc = await db.collection('messages').doc('weekly').get();
+            let messages = WEEKLY_MESSAGES;
+            
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.messages && Array.isArray(data.messages) && data.messages.length === 7) {
+                    messages = data.messages;
+                }
+            } else {
+                // Initialize with default messages from code
+                await db.collection('messages').doc('weekly').set({
+                    messages: WEEKLY_MESSAGES
+                });
+            }
+            
+            const dayOfWeek = new Date().getDay();
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = messages[dayOfWeek] || getTodaysMessage();
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            document.getElementById('messageBox').textContent = getTodaysMessage();
+        }
+
+        // Real-time updates
+        db.collection('messages').doc('weekly').onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.messages && Array.isArray(data.messages) && data.messages.length === 7) {
+                    const dayOfWeek = new Date().getDay();
+                    const messageBox = document.getElementById('messageBox');
+                    messageBox.textContent = data.messages[dayOfWeek] || getTodaysMessage();
+                }
+            }
+        });
     }
 </script>
 </body>
