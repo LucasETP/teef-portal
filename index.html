@@ -230,6 +230,24 @@
             grid-column: span 2;
         }
 
+        .key.correct {
+            background: #90ee90;
+            border-color: #228b22;
+            color: #000;
+        }
+
+        .key.present {
+            background: #ffeb3b;
+            border-color: #fbc02d;
+            color: #000;
+        }
+
+        .key.absent {
+            background: #d3d3d3;
+            border-color: #999;
+            color: #666;
+        }
+
         .photo-upload {
             text-align: center;
         }
@@ -636,13 +654,13 @@
     // ============================================
     // EDIT THIS ARRAY TO CHANGE WEEKLY WORDS (Sunday = 0, Saturday = 6)
     const WEEKLY_WORDS = [
-        'BUNNY',  // Sunday
-        'PASTA',  // Monday
-        'FARTO',  // Tuesday
-        'SCUBA',  // Wednesday
-        'CHINA',  // Thursday
-        'SPAIN',  // Friday
-        'SLEEP'    // Saturday
+        'GLAZE',  // Sunday
+        'PARTY',  // Monday
+        'PLATE',  // Tuesday
+        'SMELL',  // Wednesday
+        'QUIRK',  // Thursday
+        'SNORE',  // Friday
+        'HOUSE'    // Saturday
     ];
 
     let wordleState = {
@@ -754,9 +772,46 @@
         const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
         keyboard.innerHTML = '';
 
+        // Track the best state for each letter across all guesses
+        const letterStates = {};
+        
+        wordleState.guesses.forEach(guess => {
+            if (guess.length === 5) {
+                for (let i = 0; i < 5; i++) {
+                    const letter = guess[i];
+                    const currentState = letterStates[letter] || 'none';
+                    
+                    // Determine state for this letter in this position
+                    let newState = 'none';
+                    if (letter === wordleState.word[i]) {
+                        newState = 'correct';
+                    } else if (wordleState.word.includes(letter)) {
+                        newState = 'present';
+                    } else {
+                        newState = 'absent';
+                    }
+                    
+                    // Update to best state (correct > present > absent > none)
+                    if (newState === 'correct' || currentState === 'correct') {
+                        letterStates[letter] = 'correct';
+                    } else if (newState === 'present' || currentState === 'present') {
+                        letterStates[letter] = 'present';
+                    } else if (newState === 'absent' && currentState === 'none') {
+                        letterStates[letter] = 'absent';
+                    }
+                }
+            }
+        });
+
         keys.forEach(key => {
             const btn = document.createElement('div');
             btn.className = 'key';
+            
+            // Apply state class if letter has been guessed
+            if (letterStates[key]) {
+                btn.classList.add(letterStates[key]);
+            }
+            
             btn.textContent = key;
             btn.onclick = () => handleKeyPress(key);
             keyboard.appendChild(btn);
@@ -1050,13 +1105,13 @@
     // ============================================
     // EDIT THIS ARRAY TO CHANGE WEEKLY MESSAGES (Sunday = 0, Saturday = 6)
     const WEEKLY_MESSAGES = [
-        'You are the best thing that\'s ever happened to me!',  // Sunday
-        'Monday\'s suck. But you suck better ;)',                  // Monday
-        'You are my favorite tattoo artist',                          // Tuesday
-        'Can\'t wait to go to boston with you...',                   // Wednesday
-        'You are smart like gmail and cute like pibble',                          // Thursday
-        'Your farts smell like roses to me',                             // Friday
-        '*Boops you on the nose* Derp xD'                        // Saturday
+        'I wish I could wake up every morning next to you',  // Sunday
+        'Monday\'s are hard, but you make me harder...',                  // Monday
+        'Your talent never ceases to amaze me',                          // Tuesday
+        'I\'m so excited for Hong Kong with you,',                  // Wednesday
+        'Can I have 3 smooches and 4 squeezes please',                          // Thursday
+        'I need a big sniff of your scalp rn',                             // Friday
+        'You are mi BOMBOOOO'                        // Saturday
     ];
 
     function getTodaysMessage() {
