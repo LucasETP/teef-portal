@@ -891,13 +891,13 @@
     // ============================================
     // EDIT THIS ARRAY TO CHANGE WEEKLY WORDS (Sunday = 0, Saturday = 6)
     const WEEKLY_WORDS = [
-        'BREAK',  // Sunday
-        'SHARP',  // Monday
-        'JEWEL',  // Tuesday
-        'BOMBO',  // Wednesday
-        'SPACE',  // Thursday
-        'JELLY',  // Friday
-        'BRAIN'    // Saturday
+        'BLIMP',  // Sunday
+        'FIGHT',  // Monday
+        'CROWD',  // Tuesday
+        'STRAY',  // Wednesday
+        'RIVER',  // Thursday
+        'GHOUL',  // Friday
+        'WRITE'    // Saturday
     ];
 
     let wordleState = {
@@ -1127,11 +1127,6 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            if (file.size > 1024 * 1024) {
-                alert('Photo too large! Please choose an image under 1MB.');
-                return;
-            }
-
             loading.style.display = 'block';
 
             const reader = new FileReader();
@@ -1342,13 +1337,13 @@
     // ============================================
     // EDIT THIS ARRAY TO CHANGE WEEKLY MESSAGES (Sunday = 0, Saturday = 6)
     const WEEKLY_MESSAGES = [
-        'Sunday is not funday when you\'re not around :(',  // Sunday
-        'Monday\'s are smelly but you\'re smellier :)',                  // Monday
-        'I hope stubert is as soft as ever',                          // Tuesday
-        'Can I have your daughter for the rest of my lifeeee',                  // Wednesday
-        'Maybe I can fit in your suitcase UwU',                          // Thursday
-        'Safe travels. I love you',                             // Friday
-        'I miss you already cutie'                        // Saturday
+        'me on dec 30: ༼ つ ◕_◕ ༽つ',  // Sunday
+        'I miss showering with you',                  // Monday
+        'Te amo mas que la comida',                          // Tuesday
+        'Warning: Ima squeeze you so hard u throw up',                  // Wednesday
+        'I miss sniffing your hair #creep',                          // Thursday
+        'I wanna travel the world with u ong',                             // Friday
+        'I miss picking you up even tho ur so heavy'                        // Saturday
     ];
 
     function getTodaysMessage() {
