@@ -221,7 +221,8 @@ input[type="password"] {
     padding: 12px;
     width: 100%;
     margin-bottom: 10px;
-    font-size: 1.1em;
+    font-size: 16px;
+    /* Prevents auto-zoom on iOS */
     outline: none;
     transition: all 0.3s;
 }
@@ -242,7 +243,8 @@ input:focus {
 }
 
 .login-box {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     padding: 30px;
     text-align: center;
 }
@@ -354,7 +356,7 @@ h1.glitch::after {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 15px 20px;
     border-bottom: 1px solid var(--glass-border);
     backdrop-filter: blur(5px);
 }
@@ -379,8 +381,8 @@ h1.glitch::after {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto auto;
     /* implicit rows */
-    gap: 20px;
-    padding: 30px;
+    gap: 15px;
+    padding: 15px;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -428,7 +430,7 @@ h1.glitch::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 1.25em;
     font-family: var(--font-display);
     color: #fff;
 }
@@ -642,5 +644,29 @@ input[type="file"] {
     .widget-spanish,
     .widget-message {
         grid-column: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    h1.glitch {
+        font-size: 1.8em;
+    }
+
+    .cyber-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+    .wordle-grid {
+        gap: 3px;
+    }
+
+    .wordle-cell {
+        font-size: 1.2em;
+    }
+
+    .key {
+        padding: 12px 0;
+        /* Taller keys for easier touch */
     }
 }
