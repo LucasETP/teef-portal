@@ -1,1393 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teef Portal ✨</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #ffd1dc 0%, #e0b0ff 50%, #b0d4ff 100%);
-            min-height: 100vh;
-            padding: 20px;
-            image-rendering: pixelated;
-            position: relative;
-            overflow-x: hidden;
-            transition: background 0.6s ease, color 0.6s ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .login-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            text-align: center;
-        }
-
-        .login-box {
-            background: rgba(255, 255, 255, 0.95);
-            border: 4px solid #ff69b4;
-            padding: 40px;
-            border-radius: 0;
-            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
-            max-width: 400px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #ff1493;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 3px 3px 0 #ffc0cb;
-            letter-spacing: 3px;
-        }
-
-        .pixel-heart {
-            font-size: 3em;
-            margin: 20px 0;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes wiggle {
-            0%, 100% { transform: rotate(-2deg); }
-            50% { transform: rotate(2deg); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        @keyframes snowfall {
-            0% { background-position: 0 0, 0 0, 0 0; }
-            100% { background-position: 0 200px, 0 300px, 0 400px; }
-        }
-
-        @keyframes aurora {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        @keyframes candyPulse {
-            0%, 100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.8)); }
-            50% { filter: drop-shadow(0 0 20px rgba(255,0,0,0.7)); }
-        }
-
-        @keyframes marqueeLights {
-            0% { background-position: 0 0; }
-            100% { background-position: 300px 0; }
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, #0b6623, #1fb24a);
-            color: #fff;
-            border: 4px solid #fff;
-            padding: 14px 28px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.95em;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            animation: wiggle 2.6s ease-in-out infinite;
-        }
-
-        .theme-toggle::after {
-            content: '☃️';
-            display: inline-block;
-            margin-left: 10px;
-            animation: bounce 1.4s infinite;
-        }
-
-        body.christmas-theme {
-            background: linear-gradient(120deg, #052b52, #761111, #0d3b66);
-            color: #fff8e7;
-            animation: aurora 12s ease-in-out infinite;
-        }
-
-        body.christmas-theme::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 16px;
-            background-image: repeating-linear-gradient(
-                90deg,
-                #ff595e 0 40px,
-                #ffee32 40px 80px,
-                #8ac926 80px 120px,
-                #1982c4 120px 160px
-            );
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-            z-index: 1;
-            animation: marqueeLights 4s linear infinite;
-            pointer-events: none;
-        }
-
-        body.christmas-theme::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(2px 2px at 20px 20px, rgba(255,255,255,0.9), transparent),
-                radial-gradient(3px 3px at 40px 60px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(2px 2px at 130px 90px, rgba(255,255,255,0.6), transparent);
-            background-size: 200px 200px, 300px 300px, 400px 400px;
-            animation: snowfall 12s linear infinite;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body.christmas-theme .theme-toggle {
-            background: linear-gradient(135deg, #ff0000, #ff8e3c);
-            color: #fff;
-            border-color: #ffe347;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
-        }
-
-        body.christmas-theme .login-box,
-        body.christmas-theme .dashboard-header,
-        body.christmas-theme .widget {
-            background: rgba(15, 15, 15, 0.8);
-            border-color: #ffe347;
-            box-shadow: 0 0 25px rgba(255, 0, 0, 0.4);
-        }
-
-        body.christmas-theme h1,
-        body.christmas-theme .section-title,
-        body.christmas-theme .widget h2 {
-            color: #ffe347;
-            text-shadow: 0 0 8px rgba(255, 0, 0, 0.8), 0 0 4px rgba(255, 255, 255, 0.6);
-            animation: candyPulse 2s infinite;
-        }
-
-        body.christmas-theme .pixel-heart {
-            animation: candyPulse 1s infinite;
-        }
-
-        body.christmas-theme button,
-        body.christmas-theme .upload-btn {
-            background: linear-gradient(135deg, #ff0000, #008000);
-            border: 2px solid #ffe347;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-            color: #fff;
-        }
-
-        body.christmas-theme button:hover,
-        body.christmas-theme .upload-btn:hover {
-            transform: translate(1px, 1px) scale(1.01);
-            background: linear-gradient(135deg, #ff4d6d, #0f996c);
-        }
-
-        body.christmas-theme .wordle-cell.correct {
-            background: #008000;
-            border-color: #ffe347;
-            color: #ffe347;
-        }
-
-        body.christmas-theme .wordle-cell.present {
-            background: #ffe347;
-            border-color: #ff0000;
-            color: #ff0000;
-        }
-
-        body.christmas-theme .wordle-cell.absent {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #ffe347;
-            color: #fff;
-        }
-
-        body.christmas-theme .message-box,
-        body.christmas-theme .word-display,
-        body.christmas-theme .word-form {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: #ffe347;
-            color: #ffe347;
-        }
-
-        body.christmas-theme .info-text {
-            color: #ffe347;
-        }
-
-        body.christmas-theme .photo-preview {
-            border-color: #ffe347;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-        }
-
-        input[type="password"], input[type="text"], textarea {
-            width: 100%;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1em;
-            border: 3px solid #ff69b4;
-            background: #fff;
-            margin: 10px 0;
-            outline: none;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        input[type="password"]:focus, input[type="text"]:focus, textarea:focus {
-            border-color: #ff1493;
-            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
-        }
-
-        button {
-            background: #ff69b4;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-            transition: all 0.1s;
-        }
-
-        button:hover {
-            background: #ff1493;
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            transform: translate(4px, 4px);
-            box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .error-message {
-            color: #ff1493;
-            margin-top: 10px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .dashboard {
-            display: none;
-        }
-
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.95);
-            border: 4px solid #ff69b4;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .dashboard-header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-
-        .logout-btn {
-            background: #b19cd9;
-            padding: 10px 20px;
-            font-size: 0.9em;
-        }
-
-        .section-title {
-            color: #ff1493;
-            font-size: 1.8em;
-            margin: 30px 0 15px 0;
-            text-align: center;
-            text-shadow: 2px 2px 0 #ffc0cb;
-        }
-
-        .widgets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .widget {
-            background: rgba(255, 255, 255, 0.95);
-            border: 4px solid #b19cd9;
-            padding: 20px;
-            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .widget h2 {
-            color: #9370db;
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            border-bottom: 3px dashed #b19cd9;
-            padding-bottom: 10px;
-        }
-
-        .wordle-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            margin: 15px 0;
-        }
-
-        .wordle-cell {
-            aspect-ratio: 1;
-            border: 3px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .wordle-cell.correct {
-            background: #90ee90;
-            border-color: #228b22;
-        }
-
-        .wordle-cell.present {
-            background: #ffeb3b;
-            border-color: #fbc02d;
-        }
-
-        .wordle-cell.absent {
-            background: #d3d3d3;
-            border-color: #999;
-        }
-
-        .wordle-keyboard {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            margin-top: 15px;
-        }
-
-        .key {
-            padding: 10px 5px;
-            background: #e0e0e0;
-            border: 2px solid #999;
-            font-size: 0.8em;
-            cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .key:hover {
-            background: #d0d0d0;
-        }
-
-        .key.wide {
-            grid-column: span 2;
-        }
-
-        .key.correct {
-            background: #90ee90;
-            border-color: #228b22;
-            color: #000;
-        }
-
-        .key.present {
-            background: #ffeb3b;
-            border-color: #fbc02d;
-            color: #000;
-        }
-
-        .key.absent {
-            background: #d3d3d3;
-            border-color: #999;
-            color: #666;
-        }
-
-        .photo-upload {
-            text-align: center;
-        }
-
-        .photo-preview {
-            margin: 15px 0;
-            max-width: 100%;
-            max-height: 300px;
-            border: 3px solid #b19cd9;
-            display: none;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .upload-btn {
-            background: #b19cd9;
-            display: inline-block;
-            padding: 12px 24px;
-            cursor: pointer;
-            margin: 10px 0;
-            color: white;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1em;
-            font-weight: bold;
-            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
-            transition: all 0.1s;
-        }
-
-        .upload-btn:hover {
-            background: #9370db;
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .word-display {
-            background: #fff0f5;
-            border: 3px solid #ff69b4;
-            padding: 20px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .word-char {
-            font-size: 3em;
-            color: #ff1493;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-
-        .word-info {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-
-        .word-form {
-            background: #f0f8ff;
-            border: 3px dashed #b19cd9;
-            padding: 15px;
-            margin: 10px 0;
-        }
-
-        .word-form label {
-            display: block;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #9370db;
-        }
-
-        .submit-word-btn {
-            background: #9370db;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .message-box {
-            background: #ffe4e1;
-            border: 3px dashed #ff69b4;
-            padding: 20px;
-            text-align: center;
-            font-size: 1.1em;
-            line-height: 1.6;
-            color: #ff1493;
-        }
-
-        .loading {
-            text-align: center;
-            color: #9370db;
-            padding: 10px;
-            font-style: italic;
-        }
-
-        .info-text {
-            font-size: 0.9em;
-            color: #666;
-            margin: 10px 0;
-            text-align: center;
-        }
-
-        .word-history {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #b19cd9;
-        }
-
-        .word-history-title {
-            font-size: 1em;
-            color: #9370db;
-            font-weight: bold;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .word-history-title:hover {
-            color: #7b5fb8;
-        }
-
-        .word-history-list {
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 10px;
-        }
-
-        .word-history-list.show {
-            display: block;
-        }
-
-        .word-history-item {
-            background: #f0f8ff;
-            border: 2px solid #b19cd9;
-            padding: 10px;
-            margin: 8px 0;
-            font-size: 0.9em;
-        }
-
-        .word-history-item .word-char {
-            font-size: 1.5em;
-            margin: 5px 0;
-        }
-
-        .word-history-item .word-info {
-            font-size: 0.9em;
-            margin: 3px 0;
-        }
-
-        .message-edit-btn {
-            background: #b19cd9;
-            padding: 8px 16px;
-            font-size: 0.85em;
-            margin-top: 10px;
-        }
-
-        .message-edit-form {
-            display: none;
-            margin-top: 15px;
-        }
-
-        .message-edit-form.show {
-            display: block;
-        }
-
-        .message-edit-form textarea {
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .theme-toggle {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                width: calc(100% - 40px);
-            }
-
-            .widgets-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .wordle-keyboard {
-                grid-template-columns: repeat(10, 1fr);
-                font-size: 0.7em;
-            }
-
-            .key {
-                padding: 8px 2px;
-            }
-        }
-    </style>
+    <title>TEEF_PORTAL_V2 // SYSTEM_ONLINE</title>
+    <!-- Google Fonts: Orbitron & Rajdhani -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-<button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
-    🎄 ENTER CHRISTMAS CHAOS
-</button>
-<div class="login-page" id="loginPage">
-    <div class="login-box">
-        <h1>✨ TEEF PORTAL ✨</h1>
-        <div class="pixel-heart">💖</div>
-        <input
-                type="password"
-                id="passwordInput"
-                placeholder="Enter password..."
-                autocomplete="off"
-        >
-        <button onclick="checkPassword()">ENTER</button>
-        <div class="error-message" id="errorMessage">Wrong password! Try again 💔</div>
+    <!-- Cyber Background -->
+    <div class="cyber-bg">
+        <div class="grid-lines"></div>
+        <div class="scanlines"></div>
+        <div class="glow-orb top-left"></div>
+        <div class="glow-orb bottom-right"></div>
     </div>
-</div>
 
-<div class="dashboard" id="dashboard">
-    <div class="container">
-        <div class="dashboard-header">
-            <h1>✨ TEEF PORTAL ✨</h1>
-            <button class="logout-btn" onclick="logout()">LOGOUT</button>
-        </div>
-
-        <!-- WORDLE SECTION -->
-        <div class="widget" style="margin-bottom: 30px;">
-            <h2>🎮 Daily Wordle</h2>
-            <div class="info-text">New word every day!</div>
-            <div id="wordleGame">
-                <div class="wordle-grid" id="wordleGrid"></div>
-                <div class="wordle-keyboard" id="keyboard"></div>
-                <div id="wordleMessage" style="text-align: center; margin-top: 10px; font-weight: bold;"></div>
+    <div class="login-page" id="loginPage">
+        <div class="cyber-card login-box">
+            <div class="card-header">
+                <span class="status-dot"></span> SECURITY_CHECK
             </div>
+            <h1 class="glitch" data-text="TEEF_PORTAL">TEEF_PORTAL</h1>
+            <div class="hologram-heart">💖</div>
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="ACCESS_CODE..." autocomplete="off">
+                <button onclick="checkPassword()" class="cyber-btn">AUTHENTICATE</button>
+            </div>
+            <div class="error-message" id="errorMessage">ACCESS_DENIED // TRY_AGAIN</div>
         </div>
+    </div>
 
-        <!-- PHOTOS SECTION -->
-        <div class="section-title">📸 Photo Gallery</div>
-        <div class="widgets-grid">
-            <div class="widget">
-                <h2>🐰 Stubert Picture</h2>
+    <div class="dashboard" id="dashboard">
+        <header class="cyber-header">
+            <div class="logo">
+                <span class="prefix">SYS://</span>TEEF_PORTAL<span class="suffix">_V2.0</span>
+            </div>
+            <button class="logout-btn cyber-btn secondary" onclick="logout()">[ DISCONNECT ]</button>
+        </header>
+
+        <div class="cyber-grid">
+            <!-- WORDLE SECTION -->
+            <div class="cyber-card widget-wordle">
+                <div class="card-title">
+                    <h3>// DAILY_WORDLE</h3>
+                </div>
+                <div class="content-wrapper">
+                    <div id="wordleGame">
+                        <div class="wordle-grid" id="wordleGrid"></div>
+                        <div class="wordle-keyboard" id="keyboard"></div>
+                        <div id="wordleMessage" class="terminal-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHOTOS SECTION (Asymmetric) -->
+            <div class="cyber-card widget-photo-1">
+                <div class="card-title">
+                    <h3>// SUBJECT: STUBERT</h3>
+                </div>
                 <div class="photo-upload">
-                    <img id="stubertPreview" class="photo-preview" alt="Stubert photo">
-                    <div>
-                        <label for="stubertInput" class="upload-btn">📸 UPLOAD STUBERT</label>
+                    <div class="photo-frame">
+                        <img id="stubertPreview" class="photo-preview" alt="Stubert photo">
+                        <div class="scan-overlay"></div>
+                    </div>
+                    <div class="controls">
+                        <label for="stubertInput" class="cyber-btn small">UPLOAD_IMG</label>
                         <input type="file" id="stubertInput" accept="image/*">
+                        <div id="stubertDate" class="data-text">NO_DATA</div>
                     </div>
-                    <div id="stubertDate" class="info-text"></div>
-                    <div id="stubertLoading" class="loading" style="display: none;">Uploading... 🐰</div>
+                    <div id="stubertLoading" class="loading-bar">UPLOADING...</div>
                 </div>
             </div>
 
-            <div class="widget">
-                <h2>🐕 Shiba Picture</h2>
+            <div class="cyber-card widget-photo-2">
+                <div class="card-title">
+                    <h3>// SUBJECT: SHIBA</h3>
+                </div>
                 <div class="photo-upload">
-                    <img id="shibaPreview" class="photo-preview" alt="Shiba photo">
-                    <div>
-                        <label for="shibaInput" class="upload-btn">📸 UPLOAD SHIBA</label>
-                        <input type="file" id="shibaInput" accept="image/*">
+                    <div class="photo-frame">
+                        <img id="shibaPreview" class="photo-preview" alt="Shiba photo">
+                        <div class="scan-overlay"></div>
                     </div>
-                    <div id="shibaDate" class="info-text"></div>
-                    <div id="shibaLoading" class="loading" style="display: none;">Uploading... 🐕</div>
+                    <div class="controls">
+                        <label for="shibaInput" class="cyber-btn small">UPLOAD_IMG</label>
+                        <input type="file" id="shibaInput" accept="image/*">
+                        <div id="shibaDate" class="data-text">NO_DATA</div>
+                    </div>
+                    <div id="shibaLoading" class="loading-bar">UPLOADING...</div>
                 </div>
             </div>
-        </div>
 
-        <!-- LANGUAGE LEARNING SECTION -->
-        <div class="section-title">🌍 Language Learning</div>
-        <div class="widgets-grid">
-            <!-- Chinese Word - She uploads for you -->
-            <div class="widget">
-                <h2>🇨🇳 Chinese Word for Lulu</h2>
-                <div class="word-display" id="chineseDisplay">
-                    <div class="word-char">🎎</div>
-                    <div class="word-info">No word yet!</div>
+            <!-- LANGUAGE SECTION -->
+            <div class="cyber-card widget-chinese">
+                <div class="card-title">
+                    <h3>// MODULE: CHINESE</h3>
                 </div>
-                <div class="word-form">
-                    <label>Chinese Characters:</label>
-                    <input type="text" id="chineseChar" placeholder="e.g., 你好">
-                    <label>Pinyin:</label>
-                    <input type="text" id="chinesePinyin" placeholder="e.g., nǐ hǎo">
-                    <label>English:</label>
-                    <input type="text" id="chineseEnglish" placeholder="e.g., hello">
-                    <button class="submit-word-btn" onclick="submitChineseWord()">UPLOAD WORD</button>
+                <div class="holo-display" id="chineseDisplay">
+                    <div class="holo-char">DATA_NULL</div>
+                </div>
+                <div class="cyber-form">
+                    <input type="text" id="chineseChar" placeholder="CHARACTERS">
+                    <input type="text" id="chinesePinyin" placeholder="PINYIN">
+                    <input type="text" id="chineseEnglish" placeholder="ENGLISH">
+                    <button class="cyber-btn small full-width" onclick="submitChineseWord()">UPLOAD_DATA</button>
                 </div>
                 <div class="word-history" id="chineseHistory">
-                    <div class="word-history-title" onclick="toggleHistory('chinese')">
-                        <span>📚</span>
-                        <span>Study Past Words</span>
-                        <span id="chineseHistoryToggle">▼</span>
+                    <div class="history-toggle" onclick="toggleHistory('chinese')">
+                        > ACCESS_ARCHIVES <span id="chineseHistoryToggle">▼</span>
                     </div>
                     <div class="word-history-list" id="chineseHistoryList"></div>
                 </div>
             </div>
 
-            <!-- Spanish Word - You upload for her -->
-            <div class="widget">
-                <h2>🇪🇸 Spanish Word for Teef</h2>
-                <div class="word-display" id="spanishDisplay">
-                    <div class="word-char">💃</div>
-                    <div class="word-info">No word yet!</div>
+            <div class="cyber-card widget-spanish">
+                <div class="card-title">
+                    <h3>// MODULE: SPANISH</h3>
                 </div>
-                <div class="word-form">
-                    <label>Spanish Word:</label>
-                    <input type="text" id="spanishWord" placeholder="e.g., Hola">
-                    <label>Pronunciation:</label>
-                    <input type="text" id="spanishPronunciation" placeholder="e.g., OH-lah">
-                    <label>English:</label>
-                    <input type="text" id="spanishEnglish" placeholder="e.g., hello">
-                    <button class="submit-word-btn" onclick="submitSpanishWord()">UPLOAD WORD</button>
+                <div class="holo-display" id="spanishDisplay">
+                    <div class="holo-char">DATA_NULL</div>
+                </div>
+                <div class="cyber-form">
+                    <input type="text" id="spanishWord" placeholder="WORD">
+                    <input type="text" id="spanishPronunciation" placeholder="PRONUNCIATION">
+                    <input type="text" id="spanishEnglish" placeholder="ENGLISH">
+                    <button class="cyber-btn small full-width" onclick="submitSpanishWord()">UPLOAD_DATA</button>
                 </div>
                 <div class="word-history" id="spanishHistory">
-                    <div class="word-history-title" onclick="toggleHistory('spanish')">
-                        <span>📚</span>
-                        <span>Study Past Words</span>
-                        <span id="spanishHistoryToggle">▼</span>
+                    <div class="history-toggle" onclick="toggleHistory('spanish')">
+                        > ACCESS_ARCHIVES <span id="spanishHistoryToggle">▼</span>
                     </div>
                     <div class="word-history-list" id="spanishHistoryList"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- MESSAGE SECTION -->
-        <div class="widget" style="margin-top: 30px;">
-            <h2>💌 Daily Message</h2>
-            <div class="info-text">New message every day!</div>
-            <div class="message-box" id="messageBox">
-                Loading message...
+            <!-- MESSAGE SECTION -->
+            <div class="cyber-card widget-message">
+                <div class="card-title">
+                    <h3>// INCOMING_TRANSMISSION</h3>
+                </div>
+                <div class="message-terminal" id="messageBox">
+                    ESTABLISHING_CONNECTION...
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-<script>
-    // ============================================
-    // FIREBASE CONFIGURATION
-    // ============================================
-    const firebaseConfig = {
-        apiKey: "AIzaSyAkRX4SYQAKbd1hz9DhzWLjpH8B6KqL-R8",
-        authDomain: "teef-portal.firebaseapp.com",
-        projectId: "teef-portal",
-        storageBucket: "teef-portal.firebasestorage.app",
-        messagingSenderId: "430563187500",
-        appId: "1:430563187500:web:143bf1cf2246857c342a89"
-    };
-
-    let db;
-    try {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        console.log('✅ Firebase initialized');
-    } catch (error) {
-        console.error('❌ Firebase initialization error:', error);
-        alert('Firebase not configured! See console for details.');
-    }
-
-    // ============================================
-    // PASSWORD & AUTH
-    // ============================================
-    const PASSWORD_HASH = '4f3bedac8096ef06a4902c84cfd4a08ec1f1f88049637a04e56bd1384dbfff6a';
-    const THEME_STORAGE_KEY = 'teef-portal-theme';
-    let activeTheme = 'default';
-
-    function getSavedTheme() {
-        try {
-            return localStorage.getItem(THEME_STORAGE_KEY);
-        } catch (error) {
-            console.warn('Theme storage unavailable', error);
-            return null;
-        }
-    }
-
-    function saveTheme(theme) {
-        try {
-            localStorage.setItem(THEME_STORAGE_KEY, theme);
-        } catch (error) {
-            console.warn('Unable to persist theme', error);
-        }
-    }
-
-    function applyTheme(theme) {
-        activeTheme = theme === 'christmas' ? 'christmas' : 'default';
-        const isChristmas = activeTheme === 'christmas';
-        document.body.classList.toggle('christmas-theme', isChristmas);
-
-        const toggleBtn = document.getElementById('themeToggle');
-        if (toggleBtn) {
-            toggleBtn.setAttribute('aria-pressed', isChristmas ? 'true' : 'false');
-            toggleBtn.innerHTML = isChristmas
-                ? '🎁 LEAVE THE WINTER WONDERLAND'
-                : '🎄 ENTER CHRISTMAS CHAOS';
-        }
-    }
-
-    function toggleTheme() {
-        const newTheme = activeTheme === 'christmas' ? 'default' : 'christmas';
-        applyTheme(newTheme);
-        saveTheme(newTheme);
-    }
-
-    async function hashPassword(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password);
-        const hash = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(hash))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-    }
-
-    async function checkPassword() {
-        const input = document.getElementById('passwordInput').value;
-        const hashed = await hashPassword(input);
-
-        if (hashed === PASSWORD_HASH) {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('errorMessage').style.display = 'none';
-            initWidgets();
-        } else {
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('passwordInput').value = '';
-        }
-    }
-
-    function logout() {
-        document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('passwordInput').value = '';
-    }
-
-    // Apply saved theme immediately (button label will update after DOM ready)
-    applyTheme(getSavedTheme() || 'default');
-
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkPassword();
-        });
-
-        document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
-        // Ensure button text is accurate now that the element exists
-        applyTheme(activeTheme);
-    });
-
-    // ============================================
-    // INITIALIZE WIDGETS
-    // ============================================
-    function initWidgets() {
-        initWordle();
-        initPhotoUpload('stubert', 'stubertInput', 'stubertPreview', 'stubertDate', 'stubertLoading');
-        initPhotoUpload('shiba', 'shibaInput', 'shibaPreview', 'shibaDate', 'shibaLoading');
-        loadLanguageWord('chinese');
-        loadLanguageWord('spanish');
-        initMessages();
-    }
-
-    // ============================================
-    // WORDLE WIDGET (WITH WEEKLY ROTATION)
-    // ============================================
-    // EDIT THIS ARRAY TO CHANGE WEEKLY WORDS (Sunday = 0, Saturday = 6)
-    const WEEKLY_WORDS = [
-        'BLIMP',  // Sunday
-        'FIGHT',  // Monday
-        'CROWD',  // Tuesday
-        'STRAY',  // Wednesday
-        'RIVER',  // Thursday
-        'GHOUL',  // Friday
-        'WRITE'    // Saturday
-    ];
-
-    let wordleState = {
-        word: '',
-        guesses: [],
-        currentGuess: '',
-        gameOver: false,
-        maxGuesses: 6
-    };
-
-    function getTodaysWord() {
-        const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
-        return WEEKLY_WORDS[dayOfWeek];
-    }
-
-    async function initWordle() {
-        const today = new Date().toDateString();
-        const todaysWord = getTodaysWord();
-
-        try {
-            const doc = await db.collection('wordle').doc('current').get();
-            if (doc.exists) {
-                const data = doc.data();
-                if (data.date === today) {
-                    wordleState = data;
-                    renderWordle();
-                    return;
-                }
-            }
-        } catch (error) {
-            console.error('Error loading Wordle:', error);
-        }
-
-        wordleState = {
-            word: todaysWord,
-            guesses: [],
-            currentGuess: '',
-            gameOver: false,
-            maxGuesses: 6,
-            date: today
-        };
-        renderWordle();
-    }
-
-    async function saveWordleState() {
-        try {
-            await db.collection('wordle').doc('current').set(wordleState);
-        } catch (error) {
-            console.error('Error saving Wordle:', error);
-        }
-    }
-
-    function renderWordle() {
-        const grid = document.getElementById('wordleGrid');
-        grid.innerHTML = '';
-
-        wordleState.guesses.forEach(guess => {
-            renderGuess(guess, true);
-        });
-
-        if (!wordleState.gameOver && wordleState.guesses.length < wordleState.maxGuesses) {
-            renderGuess(wordleState.currentGuess, false);
-        }
-
-        const remaining = wordleState.maxGuesses - wordleState.guesses.length - (wordleState.gameOver ? 0 : 1);
-        for (let i = 0; i < remaining; i++) {
-            renderGuess('', false);
-        }
-
-        renderKeyboard();
-
-        if (wordleState.gameOver) {
-            const msg = document.getElementById('wordleMessage');
-            if (wordleState.guesses[wordleState.guesses.length - 1] === wordleState.word) {
-                msg.textContent = '🎉 You won! Come back tomorrow!';
-                msg.style.color = '#228b22';
-            } else {
-                msg.textContent = `Game over! Word was ${wordleState.word}`;
-                msg.style.color = '#ff1493';
-            }
-        }
-    }
-
-    function renderGuess(guess, evaluated) {
-        const grid = document.getElementById('wordleGrid');
-
-        for (let i = 0; i < 5; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'wordle-cell';
-            cell.textContent = guess[i] || '';
-
-            if (evaluated && guess.length === 5) {
-                const letter = guess[i];
-                if (letter === wordleState.word[i]) {
-                    cell.classList.add('correct');
-                } else if (wordleState.word.includes(letter)) {
-                    cell.classList.add('present');
-                } else {
-                    cell.classList.add('absent');
-                }
-            }
-
-            grid.appendChild(cell);
-        }
-    }
-
-    function renderKeyboard() {
-        const keyboard = document.getElementById('keyboard');
-        const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
-        keyboard.innerHTML = '';
-
-        // Track the best state for each letter across all guesses
-        const letterStates = {};
-        
-        wordleState.guesses.forEach(guess => {
-            if (guess.length === 5) {
-                for (let i = 0; i < 5; i++) {
-                    const letter = guess[i];
-                    const currentState = letterStates[letter] || 'none';
-                    
-                    // Determine state for this letter in this position
-                    let newState = 'none';
-                    if (letter === wordleState.word[i]) {
-                        newState = 'correct';
-                    } else if (wordleState.word.includes(letter)) {
-                        newState = 'present';
-                    } else {
-                        newState = 'absent';
-                    }
-                    
-                    // Update to best state (correct > present > absent > none)
-                    if (newState === 'correct' || currentState === 'correct') {
-                        letterStates[letter] = 'correct';
-                    } else if (newState === 'present' || currentState === 'present') {
-                        letterStates[letter] = 'present';
-                    } else if (newState === 'absent' && currentState === 'none') {
-                        letterStates[letter] = 'absent';
-                    }
-                }
-            }
-        });
-
-        keys.forEach(key => {
-            const btn = document.createElement('div');
-            btn.className = 'key';
-            
-            // Apply state class if letter has been guessed
-            if (letterStates[key]) {
-                btn.classList.add(letterStates[key]);
-            }
-            
-            btn.textContent = key;
-            btn.onclick = () => handleKeyPress(key);
-            keyboard.appendChild(btn);
-        });
-
-        const enter = document.createElement('div');
-        enter.className = 'key wide';
-        enter.textContent = 'ENTER';
-        enter.onclick = () => handleEnter();
-        keyboard.appendChild(enter);
-
-        const back = document.createElement('div');
-        back.className = 'key wide';
-        back.textContent = '←';
-        back.onclick = () => handleBackspace();
-        keyboard.appendChild(back);
-    }
-
-    function handleKeyPress(key) {
-        if (wordleState.gameOver || wordleState.currentGuess.length >= 5) return;
-        wordleState.currentGuess += key;
-        renderWordle();
-    }
-
-    function handleBackspace() {
-        if (wordleState.gameOver) return;
-        wordleState.currentGuess = wordleState.currentGuess.slice(0, -1);
-        renderWordle();
-    }
-
-    function handleEnter() {
-        if (wordleState.gameOver || wordleState.currentGuess.length !== 5) return;
-
-        wordleState.guesses.push(wordleState.currentGuess);
-
-        if (wordleState.currentGuess === wordleState.word || wordleState.guesses.length >= wordleState.maxGuesses) {
-            wordleState.gameOver = true;
-        }
-
-        wordleState.currentGuess = '';
-        saveWordleState();
-        renderWordle();
-    }
-
-    // ============================================
-    // PHOTO WIDGETS (GENERIC)
-    // ============================================
-    function initPhotoUpload(petName, inputId, previewId, dateId, loadingId) {
-        const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
-        const dateDisplay = document.getElementById(dateId);
-        const loading = document.getElementById(loadingId);
-
-        // Load current photo
-        db.collection('photos').doc(petName).get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                preview.src = data.photoData;
-                preview.style.display = 'block';
-                dateDisplay.textContent = `Uploaded: ${data.date}`;
-            }
-        }).catch(error => console.error('Error loading photo:', error));
-
-        // Real-time updates
-        db.collection('photos').doc(petName).onSnapshot((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                preview.src = data.photoData;
-                preview.style.display = 'block';
-                dateDisplay.textContent = `Uploaded: ${data.date}`;
-                loading.style.display = 'none';
-            }
-        });
-
-        input.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            loading.style.display = 'block';
-
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                try {
-                    await db.collection('photos').doc(petName).set({
-                        photoData: event.target.result,
-                        date: new Date().toLocaleDateString(),
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } catch (error) {
-                    console.error('Error uploading photo:', error);
-                    alert('Upload failed!');
-                    loading.style.display = 'none';
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // ============================================
-    // LANGUAGE WORD WIDGETS
-    // ============================================
-    function loadLanguageWord(language) {
-        // Load initial word
-        db.collection('words').doc(language).get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                updateLanguageDisplay(language, data);
-                if (data.history && data.history.length > 0) {
-                    renderWordHistory(language, data.history);
-                }
-            }
-        }).catch(error => console.error(`Error loading ${language} word:`, error));
-
-        // Real-time updates
-        db.collection('words').doc(language).onSnapshot((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                updateLanguageDisplay(language, data);
-                if (data.history && data.history.length > 0) {
-                    renderWordHistory(language, data.history);
-                }
-            }
-        });
-    }
-
-    function renderWordHistory(language, history) {
-        const historyList = document.getElementById(language + 'HistoryList');
-        if (!historyList) return;
-
-        historyList.innerHTML = '';
-        
-        // Reverse to show newest first
-        const reversedHistory = [...history].reverse();
-        
-        reversedHistory.forEach((word, index) => {
-            const item = document.createElement('div');
-            item.className = 'word-history-item';
-            
-            if (language === 'chinese') {
-                item.innerHTML = `
-                    <div class="word-char">${word.character}</div>
-                    <div class="word-info">${word.pinyin}</div>
-                    <div class="word-info">"${word.english}"</div>
-                `;
-            } else if (language === 'spanish') {
-                item.innerHTML = `
-                    <div class="word-char">${word.word}</div>
-                    <div class="word-info">${word.pronunciation}</div>
-                    <div class="word-info">"${word.english}"</div>
-                `;
-            }
-            
-            historyList.appendChild(item);
-        });
-    }
-
-    function toggleHistory(language) {
-        const historyList = document.getElementById(language + 'HistoryList');
-        const toggle = document.getElementById(language + 'HistoryToggle');
-        
-        if (historyList.classList.contains('show')) {
-            historyList.classList.remove('show');
-            toggle.textContent = '▼';
-        } else {
-            historyList.classList.add('show');
-            toggle.textContent = '▲';
-        }
-    }
-
-    function updateLanguageDisplay(language, data) {
-        const display = document.getElementById(language + 'Display');
-
-        if (language === 'chinese') {
-            display.innerHTML = `
-                <div class="word-char">${data.character}</div>
-                <div class="word-info">${data.pinyin}</div>
-                <div class="word-info">"${data.english}"</div>
-            `;
-        } else if (language === 'spanish') {
-            display.innerHTML = `
-                <div class="word-char">${data.word}</div>
-                <div class="word-info">${data.pronunciation}</div>
-                <div class="word-info">"${data.english}"</div>
-            `;
-        }
-    }
-
-    async function submitChineseWord() {
-        const character = document.getElementById('chineseChar').value.trim();
-        const pinyin = document.getElementById('chinesePinyin').value.trim();
-        const english = document.getElementById('chineseEnglish').value.trim();
-
-        if (!character || !pinyin || !english) {
-            alert('Please fill in all fields!');
-            return;
-        }
-
-        try {
-            // Get current word to add to history
-            const currentDoc = await db.collection('words').doc('chinese').get();
-            let history = [];
-            
-            if (currentDoc.exists) {
-                const currentData = currentDoc.data();
-                // Only add to history if there's a current word (not empty/placeholder)
-                if (currentData.character && currentData.character !== '🎎') {
-                    history = currentData.history || [];
-                    history.push({
-                        character: currentData.character,
-                        pinyin: currentData.pinyin,
-                        english: currentData.english,
-                        timestamp: currentData.timestamp || firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-            }
-
-            await db.collection('words').doc('chinese').set({
-                character,
-                pinyin,
-                english,
-                history: history,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            document.getElementById('chineseChar').value = '';
-            document.getElementById('chinesePinyin').value = '';
-            document.getElementById('chineseEnglish').value = '';
-
-            alert('Word uploaded! ✨');
-        } catch (error) {
-            console.error('Error uploading Chinese word:', error);
-            alert('Upload failed!');
-        }
-    }
-
-    async function submitSpanishWord() {
-        const word = document.getElementById('spanishWord').value.trim();
-        const pronunciation = document.getElementById('spanishPronunciation').value.trim();
-        const english = document.getElementById('spanishEnglish').value.trim();
-
-        if (!word || !pronunciation || !english) {
-            alert('Please fill in all fields!');
-            return;
-        }
-
-        try {
-            // Get current word to add to history
-            const currentDoc = await db.collection('words').doc('spanish').get();
-            let history = [];
-            
-            if (currentDoc.exists) {
-                const currentData = currentDoc.data();
-                // Only add to history if there's a current word (not empty/placeholder)
-                if (currentData.word && currentData.word !== '💃') {
-                    history = currentData.history || [];
-                    history.push({
-                        word: currentData.word,
-                        pronunciation: currentData.pronunciation,
-                        english: currentData.english,
-                        timestamp: currentData.timestamp || firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-            }
-
-            await db.collection('words').doc('spanish').set({
-                word,
-                pronunciation,
-                english,
-                history: history,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            document.getElementById('spanishWord').value = '';
-            document.getElementById('spanishPronunciation').value = '';
-            document.getElementById('spanishEnglish').value = '';
-
-            alert('Word uploaded! ✨');
-        } catch (error) {
-            console.error('Error uploading Spanish word:', error);
-            alert('Upload failed!');
-        }
-    }
-
-    // ============================================
-    // DAILY MESSAGES (WITH WEEKLY ROTATION)
-    // ============================================
-    // EDIT THIS ARRAY TO CHANGE WEEKLY MESSAGES (Sunday = 0, Saturday = 6)
-    const WEEKLY_MESSAGES = [
-        'me on dec 30: ༼ つ ◕_◕ ༽つ',  // Sunday
-        'I miss showering with you',                  // Monday
-        'Te amo mas que la comida',                          // Tuesday
-        'Warning: Ima squeeze you so hard u throw up',                  // Wednesday
-        'I miss sniffing your hair #creep',                          // Thursday
-        'I wanna travel the world with u ong',                             // Friday
-        'I miss picking you up even tho ur so heavy'                        // Saturday
-    ];
-
-    function getTodaysMessage() {
-        const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
-        return WEEKLY_MESSAGES[dayOfWeek];
-    }
-
-    async function initMessages() {
-        try {
-            const doc = await db.collection('messages').doc('weekly').get();
-            let messages = WEEKLY_MESSAGES;
-            
-            if (doc.exists) {
-                const data = doc.data();
-                if (data.messages && Array.isArray(data.messages) && data.messages.length === 7) {
-                    messages = data.messages;
-                }
-            } else {
-                // Initialize with default messages from code
-                await db.collection('messages').doc('weekly').set({
-                    messages: WEEKLY_MESSAGES
-                });
-            }
-            
-            const dayOfWeek = new Date().getDay();
-            const messageBox = document.getElementById('messageBox');
-            messageBox.textContent = messages[dayOfWeek] || getTodaysMessage();
-        } catch (error) {
-            console.error('Error loading messages:', error);
-            document.getElementById('messageBox').textContent = getTodaysMessage();
-        }
-
-        // Real-time updates
-        db.collection('messages').doc('weekly').onSnapshot((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                if (data.messages && Array.isArray(data.messages) && data.messages.length === 7) {
-                    const dayOfWeek = new Date().getDay();
-                    const messageBox = document.getElementById('messageBox');
-                    messageBox.textContent = data.messages[dayOfWeek] || getTodaysMessage();
-                }
-            }
-        });
-    }
-</script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <!-- theme.js REMOVED -->
+    <script src="js/wordle.js"></script>
+    <script src="js/photos.js"></script>
+    <script src="js/language.js"></script>
+    <script src="js/messages.js"></script>
+    <script src="js/app.js"></script>
 </body>
+
 </html>
