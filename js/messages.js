@@ -21,17 +21,22 @@ async function initMessages() {
     try {
         const doc = await db.collection('messages').doc('weekly').get();
         let messages = WEEKLY_MESSAGES;
+        let shouldUpdateDb = true;
 
         if (doc.exists) {
             const data = doc.data();
             if (data.messages && Array.isArray(data.messages) && data.messages.length === 7) {
                 messages = data.messages;
+                shouldUpdateDb = false;
             }
-        } else {
-            // Initialize with default messages from code
+        }
+
+        if (shouldUpdateDb) {
+            // Initialize or Repair with default messages from code
             await db.collection('messages').doc('weekly').set({
                 messages: WEEKLY_MESSAGES
-            });
+            }, { merge: true });
+            console.log('✅ Populated default messages in Firebase');
         }
 
         const dayOfWeek = new Date().getDay();
