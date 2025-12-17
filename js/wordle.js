@@ -12,6 +12,8 @@ const WEEKLY_WORDS = [
     'WRITE'    // Saturday
 ];
 
+let currentWeeklyWords = [...WEEKLY_WORDS];
+
 let wordleState = {
     word: '',
     guesses: [],
@@ -22,18 +24,60 @@ let wordleState = {
 
 function getTodaysWord() {
     const dayOfWeek = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
-    return WEEKLY_WORDS[dayOfWeek];
+    return currentWeeklyWords[dayOfWeek] || WEEKLY_WORDS[dayOfWeek];
 }
 
 async function initWordle() {
+    // 1. Fetch Weekly Words Configuration first
+    try {
+        const doc = await db.collection('wordle').doc('weekly').get();
+        if (doc.exists) {
+            const data = doc.data();
+            if (data.words && Array.isArray(data.words) && data.words.length === 7) {
+                currentWeeklyWords = data.words;
+                console.log('✅ Loaded Wordle words from Firebase');
+            }
+        } else {
+            // Initialize with default words if doc doesn't exist
+            await db.collection('wordle').doc('weekly').set({
+                words: WEEKLY_WORDS
+            });
+            console.log('⚠️ Created default Wordle words in Firebase');
+        }
+
+        // Real-time updates for words
+        db.collection('wordle').doc('weekly').onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.words && Array.isArray(data.words) && data.words.length === 7) {
+                    const oldWord = getTodaysWord();
+                    currentWeeklyWords = data.words;
+                    const newWord = getTodaysWord();
+
+                    // If the word for TODAY changed, we might want to reload or log it
+                    if (oldWord !== newWord) {
+                        console.log('🔄 Word of the day changed via Firebase update!');
+                        // Optional: Could force a reload here, but might disrupt user.
+                        // For now we just update the internal state for next load.
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error loading Wordle words config:', error);
+    }
+
     const today = new Date().toDateString();
     const todaysWord = getTodaysWord();
 
+    // 2. Fetch User Game State
     try {
         const doc = await db.collection('wordle').doc('current').get();
         if (doc.exists) {
             const data = doc.data();
-            if (data.date === today) {
+            // Only restore state if it's for the same day AND the same word
+            // (If the admin changed the word mid-day, valid old guesses might become invalid)
+            if (data.date === today && data.word === todaysWord) {
                 wordleState = data;
                 renderWordle();
                 return;
@@ -43,6 +87,7 @@ async function initWordle() {
         console.error('Error loading Wordle:', error);
     }
 
+    // Reset state for new game
     wordleState = {
         word: todaysWord,
         guesses: [],
@@ -50,7 +95,7 @@ async function initWordle() {
         gameOver: false,
         maxGuesses: 6,
         date: today
-    };
+    }; // Missing semicolon fixed implicitly if present, mostly ensuring clean block structure
     renderWordle();
 }
 
